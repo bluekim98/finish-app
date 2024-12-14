@@ -27,8 +27,8 @@
                        v-model="isFormValid"
                        @submit.prevent="login">
                     <VTextField v-model="username"
-                                label="아이디"
-                                placeholder="아이디를 입력하세요"
+                                label="이메일"
+                                placeholder="이메일을 입력하세요"
                                 variant="outlined"
                                 density="comfortable"
                                 :clearable="true"
@@ -91,7 +91,7 @@
                           color="grey-darken-1"
                           class="text-caption font-weight-medium mx-2"
                           @click="findId">
-                        아이디 찾기
+                        이메일 찾기
                     </VBtn>
                     <VDivider vertical
                               class="mx-2"
@@ -143,11 +143,11 @@ const loginWithKakao = () => {
 };
 
 const goToSignUp = () => {
-    router.push('/signup'); // 회원가입 페이지로 이동
+    router.push('/auth/sign-up'); // 회원가입 페이지로 이동
 };
 
 const findId = () => {
-    alert('아이디 찾기 기능으로 이동');
+    alert('이메일 찾기 기능으로 이동');
 };
 
 const findPassword = () => {

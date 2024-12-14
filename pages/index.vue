@@ -8,7 +8,7 @@
 const router = useRouter();
 const isAuth = ref(false)
 if (!isAuth.value) {
-    router.push('/login')
+    router.push('/auth/sign-in')
 }
 </script>
 
