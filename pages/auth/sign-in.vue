@@ -25,7 +25,7 @@
                 <!-- Login Form -->
                 <VForm ref="loginForm"
                        v-model="isFormValid"
-                       @submit.prevent="login">
+                       @submit.prevent="fetchSignIn">
                     <VTextField v-model="username"
                                 label="이메일"
                                 placeholder="이메일을 입력하세요"
@@ -112,7 +112,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-// Page Meta 설정: Blank Layout 사용
 definePageMeta({
     layout: 'blank',
 });
@@ -122,16 +121,15 @@ const password = ref('');
 const isFormValid = ref(false);
 const router = useRouter();
 
-const login = async () => {
-    try {
-        await $fetch('/api/login', {
-            method: 'POST',
-            body: { username: username.value, password: password.value },
-            credentials: 'include',
-        });
-        router.push('/'); // 로그인 후 메인 페이지로 이동
-    } catch (err) {
-        alert('로그인에 실패했습니다. 다시 시도해주세요.');
+const fetchSignIn = async () => {
+    const response = await $fetch('/api/auth/sign-in', {
+        method: 'POST',
+        body: { username: username.value, password: password.value },
+    });
+    if (response.error) {
+        alert(response.error.message);
+    } else {
+        router.push('/');
     }
 };
 

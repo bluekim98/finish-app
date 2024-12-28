@@ -11,7 +11,6 @@
                   sm="8"
                   md="6"
                   lg="4">
-                <!-- Previous Button -->
                 <VBtn variant="text"
                       prepend-icon="chevron_left"
                       :disabled="currentStep === 1"
@@ -21,9 +20,7 @@
                     이전
                 </VBtn>
 
-                <!-- Step-by-Step Form -->
                 <VForm @submit.prevent="handleNext">
-                    <!-- Step 1: Name -->
                     <div v-if="currentStep === 1"
                          class="d-flex flex-column mb-4">
                         <VTextField v-model="formData.name"
@@ -41,7 +38,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Email -->
                     <div v-else-if="currentStep === 2"
                          class="d-flex flex-column mb-4">
                         <VTextField v-model="formData.email"
@@ -59,7 +55,6 @@
                         </div>
                     </div>
 
-                    <!-- Step 3: Password -->
                     <div v-else-if="currentStep === 3"
                          class="d-flex flex-column mb-4">
                         <VTextField v-model="formData.password"
@@ -78,11 +73,9 @@
                         </div>
                     </div>
 
-                    <!-- Step 4: Phone and Verification -->
                     <template v-else-if="currentStep === 4">
-                        <!-- Phone Input -->
                         <div class="d-flex flex-column mb-4">
-                            <VTextField v-model="formData.phone"
+                            <VTextField v-model="formData.phoneNumber"
                                         placeholder="휴대전화번호"
                                         variant="underlined"
                                         :rules="[rules.required, rules.phone]"
@@ -94,7 +87,6 @@
                                 </VBtn>
                             </div>
 
-                            <!-- Verification Code Input -->
                             <VTextField v-model="formData.verificationCode"
                                         placeholder="인증번호를 입력하세요"
                                         variant="underlined"
@@ -107,7 +99,6 @@
                                 </VBtn>
                             </div>
 
-                            <!-- Timer and Resend Button -->
                             <div v-if="isCodeSent"
                                  class="text-center mt-4">
                                 <span class="text-caption text-grey-darken-1">
@@ -143,19 +134,18 @@ definePageMeta({
     layout: 'blank',
 });
 
-const currentStep = ref(1); // 현재 단계
+const currentStep = ref(1);
 const formData = ref({
     name: "",
     email: "",
     password: "",
-    phone: "",
+    phoneNumber: "",
     verificationCode: "",
 });
 const isCodeSent = ref(false);
-const timer = ref(300); // 5분 타이머
+const timer = ref(300);
 let timerInterval: ReturnType<typeof setInterval> | null = null;
 
-// 규칙
 const rules = {
     required: (value: string) => !!value || "필수 입력 항목입니다.",
     email: (value: string) =>
@@ -166,7 +156,6 @@ const rules = {
     phone: (value: string) => /^\d{10,11}$/.test(value) || "유효한 휴대전화번호를 입력하세요.",
 };
 
-// 현재 단계 유효성 검사
 const isCurrentStepValid = computed(() => {
     switch (currentStep.value) {
         case 1:
@@ -177,8 +166,8 @@ const isCurrentStepValid = computed(() => {
             return rules.required(formData.value.password) === true && rules.password(formData.value.password) === true;
         case 4:
             return (
-                rules.required(formData.value.phone) === true &&
-                rules.phone(formData.value.phone) === true &&
+                rules.required(formData.value.phoneNumber) === true &&
+                rules.phone(formData.value.phoneNumber) === true &&
                 rules.required(formData.value.verificationCode) === true
             );
         default:
@@ -186,23 +175,50 @@ const isCurrentStepValid = computed(() => {
     }
 });
 
-// 다음 단계로 이동
-const handleNext = () => {
+const handleNext = async () => {
+    if (currentStep.value === 2) {
+        const response = await $fetch('/api/user/exists', {
+            method: 'POST',
+            body: { email: formData.value.email },
+        });
+
+        if (response.error) {
+            alert(response.error.message);
+            return
+        }
+
+        if (response.data?.id) {
+            alert("사용 할 수 없는 이메일입니다.");
+            return
+        }
+    }
+
+    if (currentStep.value === 4) {
+        const response = await $fetch('/api/auth/sign-up', {
+            method: 'POST',
+            body: formData.value,
+        });
+
+        if (response?.error) {
+            alert(response.error.message);
+        } else {
+            alert("회원가입이 완료되었습니다.");
+        }
+
+        return
+    }
+
     if (currentStep.value < 4) {
         currentStep.value++;
-    } else {
-        alert("회원가입이 완료되었습니다!");
     }
 };
 
-// 이전 단계로 이동
 const handlePrevious = () => {
     if (currentStep.value > 1) {
         currentStep.value--;
     }
 };
 
-// 타이머 시작
 const startTimer = () => {
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
@@ -214,7 +230,6 @@ const startTimer = () => {
     }, 1000);
 };
 
-// 타이머 포맷팅
 const formattedTime = computed(() => {
     const minutes = Math.floor(timer.value / 60)
         .toString()
@@ -223,7 +238,6 @@ const formattedTime = computed(() => {
     return `${minutes}:${seconds}`;
 });
 
-// 인증번호 발송
 const sendVerificationCode = () => {
     isCodeSent.value = true;
     timer.value = 300; // 5분 초기화
@@ -231,7 +245,6 @@ const sendVerificationCode = () => {
     alert("인증번호가 발송되었습니다!");
 };
 
-// 인증번호 재발송
 const resendVerificationCode = () => {
     isCodeSent.value = true;
     timer.value = 300; // 5분 초기화
