@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 definePageMeta({
-    auth: true,
+    auth: false,
 });
 </script>
 
