@@ -14,8 +14,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     addRouteMiddleware(
         'auth',
         (to) => {
-            console.log({ auth: to.meta.auth, loggedIn: loggedIn.value });
-
             if (to.meta.auth && !loggedIn.value) {
                 redirectTo.value = to.path;
                 return '/auth/sign-in';

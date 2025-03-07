@@ -17,7 +17,8 @@
                                 value = v;
                             }">
                 <VCol class="pa-0">
-                    <VBtn block>
+                    <VBtn block
+                          @click="$router.push('/ticket')">
                         <VIcon icon="confirmation_number"
                                :color="getFontColor(0)"
                                size="large" />
@@ -26,7 +27,8 @@
                 </VCol>
 
                 <VCol class="pa-0">
-                    <VBtn block>
+                    <VBtn block
+                          @click="$router.push('/reservation')">
                         <VIcon icon="calendar_today"
                                :color="getFontColor(1)"
                                size="large" />
@@ -35,7 +37,8 @@
                 </VCol>
 
                 <VCol class="pa-0">
-                    <VBtn block>
+                    <VBtn block
+                          @click="$router.push('/mypage')">
                         <VIcon icon="account_circle"
                                :color="getFontColor(2)"
                                size="large" />
