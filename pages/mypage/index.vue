@@ -47,10 +47,6 @@
                 </VListItem>
                 <VListItem class="menu-item"
                            append-icon="chevron_right">
-                    전체 시설 조회
-                </VListItem>
-                <VListItem class="menu-item"
-                           append-icon="chevron_right">
                     이용 내역 조회
                 </VListItem>
             </VList>

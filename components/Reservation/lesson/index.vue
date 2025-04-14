@@ -1,5 +1,8 @@
 <template>
     <VContainer class="container">
+        <CustomDatePicker ref="datePickerRef"
+                          @select="onDateSelected" />
+
         <!-- 타이틀 및 캘린더 아이콘 -->
         <VRow align="center"
               class="title-container">
@@ -13,7 +16,7 @@
                       size="small"
                       elevation="0"
                       class="calendar-icon"
-                      @click="datePickerMenu = true" />
+                      @click="datePickerRef?.show()" />
             </VCol>
         </VRow>
 
@@ -46,21 +49,19 @@
 </template>
 
 <script setup lang="ts">
+import type { CustomDatePickerExpose } from '~/components/@types';
+
 import { ref } from 'vue'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ko'
 
 dayjs.locale('ko')
 
+const datePickerRef = ref<CustomDatePickerExpose>()
+
 const selectedDate = ref(dayjs().format('YYYY-MM-DD'))
-const datePickerMenu = ref(false)
 
 const todayFormatted = ref(dayjs(selectedDate.value).format('M/D(dd)'))
-
-const updateDate = () => {
-    todayFormatted.value = dayjs(selectedDate.value).format('M/D(dd)')
-    datePickerMenu.value = false
-}
 
 // 강사 및 레슨 정보 (예제 데이터)
 const instructors = ref([
@@ -87,6 +88,11 @@ const instructors = ref([
         ],
     },
 ])
+
+const onDateSelected = (date: string) => {
+    selectedDate.value = date
+    todayFormatted.value = dayjs(selectedDate.value).format('M/D(dd)')
+}
 </script>
 
 <style scoped>
