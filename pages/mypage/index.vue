@@ -71,9 +71,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+definePageMeta({
+    auth: true,
+});
+
 // 사용자 정보 (더미 데이터)
 const user = ref({
-    name: '홍길동',
+    name: useAuth().session.value.name,
 })
 </script>
 

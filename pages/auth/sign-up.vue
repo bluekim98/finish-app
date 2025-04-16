@@ -203,6 +203,8 @@ const handleNext = async () => {
             alert(response.error.message);
         } else {
             alert("회원가입이 완료되었습니다.");
+            // 회원가입 후 로그인 페이지로 리다이렉트
+            useRouter().push('/auth/sign-in');
         }
 
         return

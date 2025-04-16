@@ -31,6 +31,9 @@
                                 placeholder="이메일을 입력하세요"
                                 variant="outlined"
                                 density="comfortable"
+                                type="email"
+                                name="email"
+                                autocomplete="username"
                                 :clearable="true"
                                 class="mb-0"></VTextField>
 
@@ -40,6 +43,8 @@
                                 variant="outlined"
                                 density="comfortable"
                                 type="password"
+                                name="password"
+                                autocomplete="current-password"
                                 :clearable="true"
                                 class="mb-4"></VTextField>
 
@@ -129,7 +134,9 @@ const fetchSignIn = async () => {
     if (response.error) {
         alert(response.error.message);
     } else {
-        router.push('/');
+        useAuth().redirectTo.value = null;
+        await useAuth().updateSession();
+        location.href = '/';
     }
 };
 

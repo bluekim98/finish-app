@@ -7,6 +7,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
     const { data: session, refresh: updateSession } =
         await useFetch<AuthSession>('/api/auth/s');
+
     const loggedIn = computed(() => !!session.value?.id);
 
     const redirectTo = useState('authRedirect');
@@ -24,7 +25,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
     const currentRoute = useRoute();
 
-    if (process.client) {
+    if (import.meta.client) {
         watch(loggedIn, async (loggedIn) => {
             if (!loggedIn && currentRoute.meta.auth) {
                 redirectTo.value = currentRoute.path;

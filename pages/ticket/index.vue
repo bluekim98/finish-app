@@ -111,6 +111,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
+definePageMeta({
+    auth: true,
+});
+
 // 사용 중인 수강권 목록
 const activeMemberships = ref([
     {
