@@ -28,6 +28,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+definePageMeta({
+    auth: true,
+});
+
 const tab = ref('t-room')
 const tabs = ref([
     {
