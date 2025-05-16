@@ -74,6 +74,7 @@ const getFontColor = (index: number) => {
 .content-container {
     flex-grow: 1;
     overflow-y: auto;
+    padding-top: env(safe-area-inset-top);
     padding-bottom: 70px;
     /* 하단 네비게이션과 겹치지 않도록 패딩 추가 */
     height: calc(100vh - 64px);

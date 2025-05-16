@@ -33,7 +33,6 @@ const emit = defineEmits([
 const container = ref<HTMLElement | null>(null)
 
 const ITEM_HEIGHT = 40
-const SPACER_COUNT = 3 // top/bottom padding items for centering
 
 const onScroll = () => {
     if (!container.value) return
@@ -89,6 +88,7 @@ watch(() => props.modelValue, (val) => {
     perspective: 1000px;
     position: relative;
     padding: 0;
+    width: 100%;
 }
 
 .wheel-item {
