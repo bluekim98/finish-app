@@ -1,0 +1,85 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+alwaysApply: true
+---
+
+## Cursor Project Rules (Finish App)
+
+### 1. Basic Information
+
+*   **Project Name**: Finish Screen Golf (finish-app)
+*   **Objective**: Provide reservation management functionality for members of a screen golf facility (as a webview within an app).
+*   **Current Stage**: UI development phase (using sample data without API integration, except for authentication features which are server-integrated and implemented).
+
+### 2. Tech Stack
+
+*   **Framework**: Nuxt.js 3 (Vue 3)
+*   **UI Library**: Vuetify 3
+*   **State Management**: Vue Composition API (consider Pinia if needed)
+*   **Routing**: Nuxt.js file-based routing (`pages` directory)
+*   **API Communication**: `useFetch` (Nuxt.js built-in) or `axios` (add if necessary)
+*   **Date/Time Handling**: `dayjs`
+*   **Icons**: Material Design Icons (`@mdi/font`, `material-design-icons-iconfont`)
+*   **Code Style**: ESLint, Prettier
+*   **Package Manager**: pnpm
+
+### 3. Directory Structure (Key Directories)
+
+*   **`pages/`**: Page-level components (linked to routing)
+    *   `index.vue`: Main/landing page
+    *   `auth/`: Authentication-related pages (login, signup, etc.)
+    *   `ticket/`: Course ticket related pages
+    *   `reservation/`: Reservation related pages
+    *   `mypage/`: My Page related pages
+*   **`components/`**: Reusable UI components
+    *   Global common components
+    *   Feature-specific subdirectories (e.g., `components/Reservation/`)
+*   **`layouts/`**: Page layouts
+    *   `default.vue`: Default layout (includes bottom tab navigation)
+    *   `blank.vue`: Empty layout without header/footer
+*   **`composables/`**: Reusable Composition API functions (e.g., `composables/auth.ts`)
+*   **`assets/`**: Static assets (images, fonts, etc. - need to clarify role division with `public/` directory)
+*   **`public/`**: Static files served as-is without a build process (favicon, etc.)
+*   **`server/`**: Server-side logic (API routes, middleware, etc.)
+    *   `api/`: API endpoints (authentication API implementation presumed)
+    *   `middleware/`: Server middleware
+*   **`plugins/`**: Nuxt.js plugins
+*   **`utils/`**: Utility functions (create if needed)
+*   **`store/`**: (If using Pinia) State management modules
+
+### 4. Key Features and Screen Composition
+
+*   **Bottom Tab Navigation (`layouts/default.vue`)**:
+    *   **Tickets (`/ticket`)**:
+        *   Ticket types: Practice Room, Lesson
+    *   **Reservation (`/reservation`)**
+    *   **My Page (`/mypage`)**
+*   **Authentication (`pages/auth/`, `server/api/auth/`, etc.)**:
+    *   Login, Logout, Sign Up
+    *   Session and cookie management (server integration complete)
+*   **Sample Data**: During the UI development phase, use sample data for UI composition (e.g., `.json` files or data within components) instead of API integration.
+
+### 5. Coding Conventions and Development Guidelines
+
+*   **Component Naming**: PascalCase (e.g., `MyComponent.vue`)
+*   **Composition API Usage**: Actively use `<script setup lang="ts">`
+*   **TypeScript**: Utilize strict type checking
+*   **API Requests**: Use `runtimeConfig.public.apiBase` as the base URL
+*   **State Management**: Use `useState` for simple cases, consider `Pinia` for complex ones
+*   **Styling**: Prioritize Vuetify components, use `<style scoped>` when necessary
+*   **Code Formatting**: Adhere to Prettier configuration
+*   **Linting**: Adhere to ESLint rules
+*   **Commit Messages**: Recommend Conventional Commits style (e.g., `feat: Add login functionality`)
+
+### 6. Future Development Direction (Estimated)
+
+*   Detailed implementation of features for each screen (button actions, data binding, etc.)
+*   Transition from sample data to actual API integration (for features other than authentication)
+*   UI/UX branching based on ticket types (Practice Room, Lesson)
+*   Detailed implementation of the reservation system logic (date/time selection, availability checks, etc.)
+*   Detailed implementation of My Page features (profile editing, reservation history, etc.)
+*   Development of additional common components and composable functions as needed.
