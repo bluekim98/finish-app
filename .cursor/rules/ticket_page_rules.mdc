@@ -1,0 +1,154 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+\
+# 수강권 페이지 (Ticket Page) 규칙
+
+## 1. 개요
+
+수강권 페이지는 사용자가 보유하고 있거나 구매할 수 있는 다양한 스크린 골프 수강권 정보를 제공합니다. 사용자는 이 페이지를 통해 현재 사용 가능한 수강권, 만료된 수강권 내역, 그리고 추천되는 수강권 상품을 확인할 수 있습니다.
+
+## 2. 주요 구성 요소 및 기능
+
+### 2.1. 헤더
+-   **타이틀**: "피니시 골프" 텍스트로 표시됩니다. (향후 앱 이름 또는 페이지별 타이틀 전략에 따라 변경 가능)
+-   **알림 아이콘**: 클릭 가능한 알림 아이콘 버튼이 우측에 위치합니다. (현재 기능 미구현)
+
+### 2.2. 사용 중인 수강권 섹션
+-   **섹션 타이틀**: "사용 중인 수강권"으로 표시됩니다.
+-   **수강권 목록** (`activeMemberships`):
+    -   각 아이템(`VListItem`)은 다음 정보를 포함합니다:
+        -   `title`: 수강권명 (예: "프리미엄 연습권")
+        -   `description`: 수강권 상세 설명 (예: "하루 2시간 사용 가능")
+        -   `usagePeriod`: 사용 기간 (예: "2024.01.01 - 2024.06.30")
+        -   `daysLeft`: 남은 기간 (예: "(D-45)")
+    -   목록이 비어있을 경우, "사용 중인 수강권이 없습니다."라는 텍스트 메시지가 표시됩니다.
+
+### 2.3. 만료된 수강권 섹션
+-   **섹션 타이틀**: "만료된 수강권"으로 표시됩니다.
+-   **수강권 목록** (`expiredMemberships` / `displayedExpiredMemberships`):
+    -   각 아이템은 다음 정보를 포함합니다:
+        -   `title`: 수강권명
+        -   `description`: 수강권 상세 설명
+        -   `usagePeriod`: 사용 기간
+    -   목록이 비어있을 경우, "만료된 수강권이 없습니다."라는 텍스트 메시지가 표시됩니다.
+    -   **더보기/접기 기능**: 만료된 수강권이 1개 초과일 경우, 기본적으로 1개만 표시되고 "더보기" 버튼이 나타납니다. "더보기" 클릭 시 전체 목록이, "접기" 클릭 시 다시 1개만 표시됩니다. (`showAllExpired` ref로 상태 관리)
+
+### 2.4. 추천 수강권 섹션
+-   **섹션 타이틀**: "추천 수강권"으로 표시됩니다.
+-   **카테고리 필터** (`categories`, `selectedCategory`):
+    -   `VChipGroup`과 `VChip`을 사용하여 구현됩니다.
+    -   필터 옵션: "전체", "연습실", "레슨". 기본 선택은 "전체"입니다.
+    -   선택된 카테고리에 따라 아래 추천 수강권 목록이 필터링됩니다.
+-   **수강권 목록** (`recommendedMemberships` / `filteredRecommendedMemberships`):
+    -   각 아이템은 다음 정보를 포함합니다:
+        -   `title`: 수강권명
+        -   `description`: 수강권 상세 설명
+        -   `usagePeriod`: 사용 기간 (또는 조건)
+        -   `category`: 해당 수강권의 카테고리 (내부 데이터, 필터링에 사용)
+
+## 3. 데이터 구조 (현재 컴포넌트 내 ref 기준)
+
+### 3.1. 수강권 아이템 공통 구조 (예시)
+```typescript
+interface MembershipItem {
+  id: number;
+  title: string;
+  description: string;
+  usagePeriod: string;
+  daysLeft?: number; // 사용 중인 수강권에만 존재
+  category?: string; // 추천 수강권에만 존재
+}
+```
+
+### 3.2. 주요 데이터 refs
+-   `activeMemberships: Ref<MembershipItem[]>`
+-   `expiredMemberships: Ref<MembershipItem[]>`
+-   `recommendedMemberships: Ref<MembershipItem[]>`
+-   `categories: Ref<{ label: string; value: string; }[]>`
+-   `selectedCategory: Ref<string>`
+-   `showAllExpired: Ref<boolean>`
+
+## 4. 온톨로지 (Ontology Diagram)
+
+```mermaid
+graph TD
+    TicketPage["수강권 페이지 (TicketPage)"]
+    PageTitle["페이지 타이틀 (PageTitle)"]
+    NotificationIcon["알림 아이콘 (NotificationIcon)"]
+
+    ActiveTicketsSection["사용 중인 수강권 섹션 (ActiveTicketsSection)"]
+    ActiveTicketList["사용 중인 수강권 목록 (ActiveTicketList)"]
+    ActiveTicketItem["사용 중인 수강권 아이템 (ActiveTicketItem)"]
+    EmptyActiveMsg["사용 중인 수강권 없음 메시지 (EmptyActiveMessage)"]
+
+    ExpiredTicketsSection["만료된 수강권 섹션 (ExpiredTicketsSection)"]
+    ExpiredTicketList["만료된 수강권 목록 (ExpiredTicketList)"]
+    ExpiredTicketItem["만료된 수강권 아이템 (ExpiredTicketItem)"]
+    EmptyExpiredMsg["만료된 수강권 없음 메시지 (EmptyExpiredMessage)"]
+    ToggleShowMoreButton["더보기/접기 버튼 (ToggleShowMoreButton)"]
+
+    RecommendedTicketsSection["추천 수강권 섹션 (RecommendedTicketsSection)"]
+    CategoryFilter["카테고리 필터 (CategoryFilter)"]
+    CategoryChip["카테고리 칩 (CategoryChip)"]
+    RecommendedTicketList["추천 수강권 목록 (RecommendedTicketList)"]
+    RecommendedTicketItem["추천 수강권 아이템 (RecommendedTicketItem)"]
+
+    TicketDetails["수강권 상세정보 (TicketDetails)"]
+    TicketTitle["수강권명 (TicketTitle)"]
+    TicketDescription["수강권 설명 (TicketDescription)"]
+    TicketPeriod["사용 기간 (TicketPeriod)"]
+    TicketDaysLeft["남은 기간 (DaysLeft)"]
+
+    TicketPage --> PageTitle
+    TicketPage --> NotificationIcon
+    TicketPage --> ActiveTicketsSection
+    TicketPage --> ExpiredTicketsSection
+    TicketPage --> RecommendedTicketsSection
+
+    ActiveTicketsSection --> ActiveTicketList
+    ActiveTicketsSection --> EmptyActiveMsg
+    ActiveTicketList --> ActiveTicketItem
+    ActiveTicketItem --> TicketDetails
+    ActiveTicketItem --> TicketDaysLeft
+
+    ExpiredTicketsSection --> ExpiredTicketList
+    ExpiredTicketsSection --> EmptyExpiredMsg
+    ExpiredTicketList --> ExpiredTicketItem
+    ExpiredTicketItem --> TicketDetails
+    ExpiredTicketsSection --> ToggleShowMoreButton
+
+    RecommendedTicketsSection --> CategoryFilter
+    CategoryFilter --> CategoryChip
+    RecommendedTicketsSection --> RecommendedTicketList
+    RecommendedTicketList --> RecommendedTicketItem
+    RecommendedTicketItem --> TicketDetails
+
+    TicketDetails --> TicketTitle
+    TicketDetails --> TicketDescription
+    TicketDetails --> TicketPeriod
+```
+
+## 5. 스타일 가이드
+
+-   컨테이너 배경색: `white`.
+-   섹션(`VCard`): 배경색 `#f9f9f9`, 둥근 모서리 (`8px`), 내부 패딩.
+-   섹션 타이틀: 굵은 글씨, 적절한 크기.
+-   수강권 아이템: 하단 구분선, 내부 패딩.
+-   폰트 및 아이콘: Vuetify 기본 컴포넌트 및 Material Design Icons 활용.
+
+## 6. 주요 인터랙션
+
+-   만료된 수강권: "더보기" / "접기" 버튼으로 목록 확장/축소.
+-   추천 수강권: 카테고리 칩 선택 시 해당 카테고리 상품 필터링.
+-   수강권 아이템 클릭 시 상세 정보 페이지로 이동 또는 구매/사용 액션 (향후 구현).
+
+## 7. 향후 개선 사항
+
+-   수강권 데이터 서버 연동.
+-   이미지 또는 아이콘을 활용한 시각적 요소 강화.
+-   구매하기/선물하기 등의 CTA(Call To Action) 버튼 추가.
+-   수강권 상세 페이지 구현.
+-   알림 기능 연동.
