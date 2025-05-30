@@ -8,7 +8,7 @@
 
             <!-- 하단 네비게이션 -->
             <VBottomNavigation :model-value="value"
-                               color="teal"
+                               color="transparent"
                                height="64"
                                grow
                                class="bottom-nav"
@@ -16,35 +16,35 @@
                                 if (v === undefined || v === value) return;
                                 value = v;
                             }">
-                <VCol class="pa-0">
-                    <VBtn block
-                          @click="$router.push('/ticket')">
-                        <VIcon icon="confirmation_number"
-                               :color="getFontColor(0)"
-                               size="large" />
-                        <span class="title text-grey-lighten-1">수강권</span>
-                    </VBtn>
-                </VCol>
+                <VBtn block
+                      :ripple="false"
+                      variant="plain"
+                      @click="$router.push('/ticket')">
+                    <VIcon icon="confirmation_number"
+                           :color="getFontColor(0)"
+                           size="large" />
+                    <span :class="['title', 'text-' + getFontColor(0)]">수강권</span>
+                </VBtn>
 
-                <VCol class="pa-0">
-                    <VBtn block
-                          @click="$router.push('/reservation')">
-                        <VIcon icon="calendar_today"
-                               :color="getFontColor(1)"
-                               size="large" />
-                        <span class="title text-grey-lighten-1">예약</span>
-                    </VBtn>
-                </VCol>
+                <VBtn block
+                      :ripple="false"
+                      variant="plain"
+                      @click="$router.push('/reservation')">
+                    <VIcon icon="calendar_today"
+                           :color="getFontColor(1)"
+                           size="large" />
+                    <span :class="['title', 'text-' + getFontColor(1)]">예약</span>
+                </VBtn>
 
-                <VCol class="pa-0">
-                    <VBtn block
-                          @click="$router.push('/mypage')">
-                        <VIcon icon="account_circle"
-                               :color="getFontColor(2)"
-                               size="large" />
-                        <span class="title text-grey-lighten-1">마이페이지</span>
-                    </VBtn>
-                </VCol>
+                <VBtn block
+                      :ripple="false"
+                      variant="plain"
+                      @click="$router.push('/mypage')">
+                    <VIcon icon="account_circle"
+                           :color="getFontColor(2)"
+                           size="large" />
+                    <span :class="['title', 'text-' + getFontColor(2)]">마이페이지</span>
+                </VBtn>
             </VBottomNavigation>
         </VLayout>
     </VApp>
@@ -56,7 +56,7 @@ import { ref } from 'vue'
 const value = ref(0)
 
 const getFontColor = (index: number) => {
-    return index === value.value ? 'grey-darken-3' : 'grey-lighten-1'
+    return index === value.value ? 'primary' : 'grey-lighten-1'
 }
 </script>
 
@@ -68,6 +68,8 @@ const getFontColor = (index: number) => {
     left: 0;
     width: 100%;
     z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: content-box;
 }
 
 /* 상단 영역까지 스크롤 가능하도록 설정 */
@@ -75,9 +77,9 @@ const getFontColor = (index: number) => {
     flex-grow: 1;
     overflow-y: auto;
     padding-top: env(safe-area-inset-top);
-    padding-bottom: 70px;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
     /* 하단 네비게이션과 겹치지 않도록 패딩 추가 */
-    height: calc(100vh - 64px);
+    height: calc(100vh - 64px - env(safe-area-inset-bottom));
     /* 네비게이션 높이를 제외한 영역을 자동 조정 */
 }
 

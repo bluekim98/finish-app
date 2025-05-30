@@ -1,5 +1,144 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# 예약 페이지 (Reservation Page) 규칙
+
+## 1. 개요
+
+예약 페이지는 사용자가 스크린 골프 연습실 또는 레슨을 예약할 수 있는 기능을 제공합니다. 사용자는 원하는 날짜와 시간을 선택하여 간편하게 예약을 진행할 수 있습니다.
+
+## 2. 주요 구성 요소 및 기능 (현재 및 예상)
+
+### 2.1. 탭 네비게이션 (`VTabs`)
+-   **위치**: 페이지 상단에 고정 (sticky).
+-   **탭 종류** (`tabs` ref):
+    -   "연습실" (`t-room`): 클릭 시 연습실 예약 관련 컴포넌트(`ReservationRoom.vue`) 표시.
+    -   "레슨" (`t-lesson`): 클릭 시 레슨 예약 관련 컴포넌트(`ReservationLesson.vue`) 표시.
+-   기본 선택 탭: "연습실".
+
+### 2.2. 연습실 예약 (`ReservationRoom.vue` - 예상 기능)
+-   **날짜 선택**: 달력 UI (`VDatePicker` 또는 커스텀 컴포넌트)를 통해 예약 날짜를 선택합니다.
+-   **시간 선택**:
+    -   선택된 날짜에 예약 가능한 시간 슬롯을 목록 또는 그리드 형태로 표시합니다.
+    -   시간 슬롯은 타석/룸별 가용성에 따라 다를 수 있습니다.
+    -   사용자는 원하는 시간 슬롯을 선택합니다.
+-   **옵션 선택 (필요시)**:
+    -   룸 타입 (예: 일반룸, VIP룸).
+    -   이용 시간 (예: 1시간, 2시간).
+    -   인원수.
+-   **예약 정보 확인**: 선택한 날짜, 시간, 룸, 이용 시간, 예상 금액 등을 요약하여 보여줍니다.
+-   **예약 확정**: "예약하기" 버튼 클릭 시 예약이 완료되고 결과(성공/실패)를 안내합니다.
+
+### 2.3. 레슨 예약 (`ReservationLesson.vue` - 예상 기능)
+-   **강사 선택 (필요시)**: 레슨 가능한 강사 목록을 표시하고 선택할 수 있게 합니다.
+    -   강사 프로필 (사진, 경력, 전문 분야) 정보 제공 가능.
+-   **날짜 선택**: 선택한 강사 또는 전체 레슨에 대해 예약 가능한 날짜를 달력 UI로 선택합니다.
+-   **시간 선택**:
+    -   선택된 날짜 및 강사에 따라 예약 가능한 레슨 시간 슬롯을 표시합니다.
+    -   사용자는 원하는 시간 슬롯을 선택합니다.
+-   **레슨 종류 선택 (필요시)**: 개인 레슨, 그룹 레슨 등.
+-   **예약 정보 확인**: 선택한 강사, 날짜, 시간, 레슨 종류, 예상 금액 등을 요약하여 보여줍니다.
+-   **예약 확정**: "예약하기" 버튼 클릭 시 예약이 완료되고 결과를 안내합니다.
+
+### 2.4. 공통 UI 요소 (예상)
+-   **날짜/시간 선택 컴포넌트**: `CustomDatePicker.vue`, `WheelDatePicker.vue` 등 프로젝트 내 공통 컴포넌트 활용 가능성.
+-   **로딩 인디케이터**: 데이터 조회 또는 예약 처리 중 상태 표시.
+-   **확인/알림 메시지**: 예약 결과, 오류 메시지 등.
+
+## 3. 데이터 구조 (예상)
+
+### 3.1. 예약 정보 (공통)
+```typescript
+interface Booking {
+  id?: string; // 예약 ID
+  type: 'room' | 'lesson'; // 예약 종류
+  date: string; // 예약 날짜 (YYYY-MM-DD)
+  time: string; // 예약 시간 (HH:mm)
+  duration?: number; // 이용 시간 (분 단위, 예: 60, 120)
+  status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  // ... 기타 공통 정보
+}
+```
+
+### 3.2. 연습실 예약 정보
+```typescript
+interface RoomBooking extends Booking {
+  type: 'room';
+  roomType?: string; // 룸 종류
+  numberOfPeople?: number; // 인원수
+}
+```
+
+### 3.3. 레슨 예약 정보
+```typescript
+interface LessonBooking extends Booking {
+  type: 'lesson';
+  instructorId?: string; // 강사 ID
+  lessonType?: string; // 레슨 종류
+}
+```
+
+## 4. 온톨로지 (Ontology Diagram)
+
+```mermaid
+graph TD
+    ReservationPage["예약 페이지 (ReservationPage)"]
+    TabNavigation["탭 네비게이션 (TabNavigation)"]
+    PracticeRoomTab["연습실 탭 (PracticeRoomTab)"]
+    LessonTab["레슨 탭 (LessonTab)"]
+
+    ReservationContent["예약 콘텐츠 영역 (ReservationContent)"]
+    PracticeRoomBookingView["연습실 예약 화면 (PracticeRoomBookingView)"]
+    LessonBookingView["레슨 예약 화면 (LessonBookingView)"]
+
+    DateSelection["날짜 선택 UI (DateSelection)"]
+    TimeSelection["시간 선택 UI (TimeSelection)"]
+    OptionSelector["옵션 선택기 (OptionSelector)"]
+    BookingSummary["예약 요약 (BookingSummary)"]
+    ConfirmButton["예약 확정 버튼 (ConfirmButton)"]
+
+    ReservationPage --> TabNavigation
+    TabNavigation --> PracticeRoomTab
+    TabNavigation --> LessonTab
+    ReservationPage --> ReservationContent
+
+    ReservationContent -- "연습실 탭 선택" --> PracticeRoomBookingView
+    ReservationContent -- "레슨 탭 선택" --> LessonBookingView
+
+    PracticeRoomBookingView --> DateSelection
+    PracticeRoomBookingView --> TimeSelection
+    PracticeRoomBookingView --> OptionSelector
+    PracticeRoomBookingView --> BookingSummary
+    PracticeRoomBookingView --> ConfirmButton
+
+    LessonBookingView --> DateSelection
+    LessonBookingView --> TimeSelection
+    LessonBookingView --> OptionSelector %% 강사 선택 등 포함
+    LessonBookingView --> BookingSummary
+    LessonBookingView --> ConfirmButton
+```
+
+## 5. 스타일 가이드
+
+-   탭 스타일: `VTabs`의 `color="primary"`, `slider-color="primary"` 등 Vuetify 기본 스타일 활용.
+-   탭 타이틀: 굵은 글씨, 적절한 폰트 크기.
+-   예약 화면 내부: 명확하고 사용하기 쉬운 UI/UX. 토스 스타일을 지향한다면 간결하고 직관적인 디자인.
+-   달력, 시간 선택 등은 일관성 있는 디자인 적용.
+
+## 6. 주요 인터랙션
+
+-   탭 클릭: 해당 예약 유형 화면으로 전환.
+-   날짜 선택: 달력에서 날짜 클릭 시 해당 날짜의 예약 가능 시간 업데이트.
+-   시간 선택: 가능한 시간 클릭 시 선택 상태 표시.
+-   예약하기 버튼: 클릭 시 예약 처리 로직 실행.
+
+## 7. 향후 개선 사항
+
+-   `ReservationRoom.vue` 및 `ReservationLesson.vue` 상세 기능 구현.
+-   실제 예약 가능 시간 데이터 연동 (API).
+-   예약 확정/취소/변경 로직 구현.
+-   나의 예약 현황 조회 기능 추가.
+-   예약 알림 기능 (푸시 또는 인앱 알림).
+-   결제 연동 (필요시).

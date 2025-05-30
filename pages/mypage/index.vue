@@ -74,13 +74,8 @@
                                 <VRow no-gutters
                                       align="center"
                                       class="fill-height">
-                                    <VCol cols="auto"
-                                          class="pr-2 d-flex align-center">
-                                        <VIcon size="small"
-                                               color="primary">mdi-check-circle-outline</VIcon>
-                                    </VCol>
-                                    <VCol class="d-flex align-center">
-                                        <div class="benefit-text">{{ benefit }}</div>
+                                    <VCol class="d-flex align-center benefit-text-col">
+                                        <div class="benefit-text">* {{ benefit }}</div>
                                     </VCol>
                                 </VRow>
                             </VListItem>
@@ -322,6 +317,11 @@ const membership = ref({
 
 .benefit-item .VIcon {
     color: #007aff;
+}
+
+.benefit-text-col {
+    /* 필요하다면 여기에 추가적인 패딩이나 정렬 스타일을 적용할 수 있습니다. */
+    /* 예: padding-left: 4px; */
 }
 
 .benefit-text {
